@@ -19,17 +19,21 @@ const CITIES = {
 
 // P1 부터 여기 아래에 씁니다.
 import {getForecast} from "./api.js";
-import { toDays } from "./logic.js";
+import { toDays, isGoodDay, summarize } from "./logic.js";
 
 const form = document.querySelector("#run-form");
 const citySelect = document.querySelector("#city");
 const rainInput = document.querySelector("#rain-limit");
 const windInput = document.querySelector("#wind-limit");
 const statusEl = document.querySelector("#status");
-const summparyEl = document.querySelector("#summary");
+const summaryEl = document.querySelector("#summary");
 const rowsEl = document.querySelector("#rows");
 
-const state = { city: null, days: [] };
+const state = { 
+  city: null,
+  days: [], 
+  limits: {rain : Number(rainInput.value), wind: Number(windInput.value)}, 
+};
 
 function dayRow(day) {
   const tr = document.createElement("tr");
@@ -38,10 +42,12 @@ function dayRow(day) {
     td.textContent = text;
     tr.append(td);
   }
+  if (isGoodDay(day, state.limits)) tr.classList.add("good");
   return tr;
 }
 
 function render() {
+  summaryEl.textContent = state.city ? `${state.city.name}: ${summarize(state.days, state.limits)}.` : "";
   const rows = state.days.map(dayRow);
   rowsEl.replaceChildren(...rows);
 }
@@ -49,6 +55,7 @@ function render() {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const city = CITIES[citySelect.value];
+  state.limits = { rain: Number(rainInput.value), wind: Number(windInput.value) };
   
   statusEl.textContent = "Loading...";
   statusEl.classList.remove("error");
