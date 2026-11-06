@@ -72,4 +72,14 @@ form.addEventListener("submit", async (event) => {
   render();
 });
 
+rainInput.addEventListener("input", () => {
+  state.limits = {rain : Number(rainInput.value), wind : Number(windInput.value)};
+  render();
+});
+
+windInput.addEventListener("input", () => {
+  state.limits = {rain : Number(rainInput.value), wind : Number(windInput.value)};
+  render();
+});
+
 
